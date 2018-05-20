@@ -61,7 +61,7 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 					go func(m slack.Message) {
 						m.Text = "<@" + m.User + "> hello!"
 						if err := slack.SendWSMessage(conn, m); err != nil {
-							logrus.WithError(err).Warnln("Unable to send message to Slack")
+							logrus.WithError(err).Errorln("Unable to send message to Slack")
 						}
 					}(m)
 				case commandBirthday:
@@ -71,7 +71,7 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 							logrus.Warn(err)
 							m.Text = fmt.Sprintf(msgs.ProfileError, m.User)
 							if err := slack.SendWSMessage(conn, m); err != nil {
-								logrus.WithError(err).Warnln("Unable to send message to Slack")
+								logrus.WithError(err).Errorln("Unable to send message to Slack")
 							}
 							return
 						}
@@ -88,13 +88,15 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 							m.Text = fmt.Sprintf(msgs.PersonalToday, user.ID)
 						}
 						if err := slack.SendWSMessage(conn, m); err != nil {
-							logrus.WithError(err).Warnln("Unable to send message to Slack")
+							logrus.WithError(err).Errorln("Unable to send message to Slack")
 						}
 					}(m)
 				case commandShutdown:
-					m.Text = msgs.Shutdown
-					if err := slack.SendWSMessage(conn, m); err != nil {
-						logrus.WithError(err).Warnln("Unable to send message to Slack")
+					if msgs.Shutdown != "" {
+						m.Text = msgs.Shutdown
+						if err := slack.SendWSMessage(conn, m); err != nil {
+							logrus.WithError(err).Errorln("Unable to send message to Slack")
+						}
 					}
 					return
 				default:

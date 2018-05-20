@@ -2,7 +2,7 @@
 
 Slack bot to remind your team and team manager about the upcoming birthdays.
 
-Requires Go v1.8+
+Requires Go 1.8+ (1.10+ for [vgo](https://github.com/golang/go/wiki/vgo) support).
 
 Inspired by `mybot` from RapidLoop at <https://github.com/rapidloop/mybot>
 
@@ -28,7 +28,7 @@ Inspired by `mybot` from RapidLoop at <https://github.com/rapidloop/mybot>
 
 ## Usage
 
-Flags:
+### Flags
 
 | Flag | Type | Description | Default |
 |--------|--------|-------------------------------------|-----------|
@@ -36,4 +36,14 @@ Flags:
 | db | `string` | BoltDB file location | `./bolt.db` |
 | debug | `bool` | Debug level for logs | `false` |
 
+### Config
+
 Example configuration can be found in `config.example.toml`
+
+### Available commands
+
+| Command | Description |
+|--------|------------------------------------------------------------|
+| hi | Prints the greeting message |
+| birthday | Prints the amount of days left to the next user's birthday |
+| turnoff | Prints the farewell message and exits |
