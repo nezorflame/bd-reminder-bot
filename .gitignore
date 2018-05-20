@@ -4,8 +4,8 @@
 *.dll
 *.so
 *.dylib
-debug*
-bd-reminder-bot*
+debug
+bd-reminder-bot
 
 # Test binary, build with `go test -c`
 *.test

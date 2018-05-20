@@ -177,7 +177,12 @@ func parseConfig() (mBucket, cBucket, bToken string, c *config, m *messages, err
 	m = &messages{}
 	msgSection := viper.Sub("messages")
 
-	m.Shutdown = msgSection.GetString("shutdown") // can be empty, why not
+	m.ShutdownAnnounce = msgSection.GetString("shutdown_announce") // can be empty, why not
+
+	if m.ShutdownError = msgSection.GetString("shutdown_error"); m.ShutdownError == "" {
+		err = errors.New("messages.shutdown_error can't be empty")
+		return
+	}
 
 	if m.ProfileError = msgSection.GetString("profile_error"); m.ProfileError == "" {
 		err = errors.New("messages.profile_error can't be empty")

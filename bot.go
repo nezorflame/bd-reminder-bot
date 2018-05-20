@@ -92,8 +92,15 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 						}
 					}(m)
 				case commandShutdown:
-					if msgs.Shutdown != "" {
-						m.Text = msgs.Shutdown
+					if m.User != c.ManagerID {
+						m.Text = msgs.ShutdownError
+						if err := slack.SendWSMessage(conn, m); err != nil {
+							logrus.WithError(err).Errorln("Unable to send message to Slack")
+						}
+						continue
+					}
+					if msgs.ShutdownAnnounce != "" {
+						m.Text = msgs.ShutdownAnnounce
 						if err := slack.SendWSMessage(conn, m); err != nil {
 							logrus.WithError(err).Errorln("Unable to send message to Slack")
 						}

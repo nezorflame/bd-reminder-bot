@@ -23,7 +23,8 @@ type config struct {
 }
 
 type messages struct {
-	Shutdown         string
+	ShutdownAnnounce string
+	ShutdownError    string
 	ProfileError     string
 	BDParseError     string
 	PersonalIncoming string

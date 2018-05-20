@@ -46,4 +46,10 @@ Example configuration can be found in `config.example.toml`
 |--------|------------------------------------------------------------|
 | hi | Prints the greeting message |
 | birthday | Prints the amount of days left to the next user's birthday |
-| turnoff | Prints the farewell message and exits |
+| turnoff | Prints the farewell message and exits (manager only) |
+
+### Limitations
+
+Currently users have to fill their birthday into the `Skype` field (because there is no `Birthday` field available) so that bot could parse it.
+
+This behaviour will change in the future versions.
