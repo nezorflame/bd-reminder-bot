@@ -72,7 +72,7 @@ func initWSConn(token string) (wsURL, userID string, err error) {
 	}
 
 	params := map[string]string{"token": token}
-	respBody, err := makeRequest(startURL, "GET", contentEncoded, nil, params, nil)
+	respBody, err := makeRequest(startURL, methodGET, contentEncoded, nil, params, nil)
 	if err != nil {
 		err = errors.Wrap(err, "unable to make GET request")
 		return
@@ -97,14 +97,14 @@ func makeRequest(url, method, contentType string, body []byte, params, headers m
 	defer fasthttp.ReleaseRequest(req)
 	req.Header.SetMethod(method)
 	req.Header.SetContentType(contentType)
-	if headers != nil && len(headers) > 0 {
+	if len(headers) > 0 {
 		for k, v := range headers {
 			req.Header.Set(k, v)
 		}
 	}
 
 	req.SetRequestURI(url)
-	if params != nil && len(params) > 0 {
+	if len(params) > 0 {
 		for k, v := range params {
 			req.URI().QueryArgs().Add(k, v)
 		}

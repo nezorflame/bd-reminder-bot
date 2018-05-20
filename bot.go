@@ -55,7 +55,9 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 				case "hi":
 					go func(m slack.Message) {
 						m.Text = "<@" + m.User + "> hello!"
-						slack.SendWSMessage(conn, m)
+						if err := slack.SendWSMessage(conn, m); err != nil {
+							logrus.WithError(err).Warnln("Unable to send message to Slack")
+						}
 					}(m)
 				case "birthday":
 					go func(m slack.Message) {
@@ -63,7 +65,9 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 						if err != nil {
 							logrus.Warn(err)
 							m.Text = fmt.Sprintf(msgs.ProfileError, m.User)
-							slack.SendWSMessage(conn, m)
+							if err := slack.SendWSMessage(conn, m); err != nil {
+								logrus.WithError(err).Warnln("Unable to send message to Slack")
+							}
 							return
 						}
 
@@ -78,11 +82,15 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 							logrus.Infof("User %s: birthday is today", user.ID)
 							m.Text = fmt.Sprintf(msgs.PersonalToday, user.ID)
 						}
-						slack.SendWSMessage(conn, m)
+						if err := slack.SendWSMessage(conn, m); err != nil {
+							logrus.WithError(err).Warnln("Unable to send message to Slack")
+						}
 					}(m)
 				case "turnoff":
 					m.Text = "Bye!"
-					slack.SendWSMessage(conn, m)
+					if err := slack.SendWSMessage(conn, m); err != nil {
+						logrus.WithError(err).Warnln("Unable to send message to Slack")
+					}
 					return
 				default:
 					// ignore this

@@ -16,11 +16,8 @@ type DB struct {
 	*bolt.DB
 }
 
-// Default DB consts
-const (
-	DefaultDBTimeout = 1 * time.Second
-	DefaultDBExpTime = 240 * time.Hour
-)
+// DefaultDBTimeout for Bolt
+const DefaultDBTimeout = 1 * time.Second
 
 func openDB(path *string, mBucket, cBucket string, timeout time.Duration) (*DB, error) {
 	if timeout == 0 {

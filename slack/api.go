@@ -62,7 +62,7 @@ func SendAPIMessage(token, chanID, message string) error {
 	}
 	headers := map[string]string{"Authorization": "Bearer " + token}
 
-	body, err = makeRequest(postMessageURL, "POST", contentJSON, body, nil, headers)
+	body, err = makeRequest(postMessageURL, methodPOST, contentJSON, body, nil, headers)
 	if err != nil {
 		return errors.Wrap(err, "unable to make POST request")
 	}
@@ -91,7 +91,7 @@ func CreateNewConversation(token, conversationName string, isPrivate bool) (stri
 		"name":       conversationName,
 		"is_private": strconv.FormatBool(isPrivate),
 	}
-	respBody, err := makeRequest(conversationsCreateURL, "GET", contentEncoded, nil, params, nil)
+	respBody, err := makeRequest(conversationsCreateURL, methodGET, contentEncoded, nil, params, nil)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to make GET request")
 	}
@@ -116,7 +116,7 @@ func GetConversationInfo(token, chanID string) (*Conversation, error) {
 	}
 
 	params := map[string]string{"token": token, "channel": chanID}
-	respBody, err := makeRequest(conversationsInfoURL, "GET", contentEncoded, nil, params, nil)
+	respBody, err := makeRequest(conversationsInfoURL, methodGET, contentEncoded, nil, params, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to make GET request")
 	}
@@ -146,7 +146,7 @@ func GetConversations(token string, withArchived bool) ([]Conversation, error) {
 		"types":            "public_channel,private_channel",
 		"exclude_archived": fmt.Sprintf("%t", !withArchived),
 	}
-	respBody, err := makeRequest(conversationsListURL, "GET", contentEncoded, nil, params, nil)
+	respBody, err := makeRequest(conversationsListURL, methodGET, contentEncoded, nil, params, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to make GET request")
 	}
@@ -171,7 +171,7 @@ func GetConversationMembers(token, chanID string) ([]string, error) {
 	}
 
 	params := map[string]string{"token": token, "channel": chanID}
-	respBody, err := makeRequest(conversationsMembersURL, "GET", contentEncoded, nil, params, nil)
+	respBody, err := makeRequest(conversationsMembersURL, methodGET, contentEncoded, nil, params, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to make GET request")
 	}
@@ -196,7 +196,7 @@ func GetUserProfile(token, userID string) (*UserProfile, error) {
 	}
 
 	params := map[string]string{"token": token, "user": userID}
-	respBody, err := makeRequest(userProfileURL, "GET", contentEncoded, nil, params, nil)
+	respBody, err := makeRequest(userProfileURL, methodGET, contentEncoded, nil, params, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to make GET request")
 	}
@@ -222,7 +222,7 @@ func FindDMByUserID(token, userID string) (string, error) {
 	}
 
 	params := map[string]string{"token": token}
-	respBody, err := makeRequest(imListURL, "GET", contentEncoded, nil, params, nil)
+	respBody, err := makeRequest(imListURL, methodGET, contentEncoded, nil, params, nil)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to make GET request")
 	}
@@ -273,7 +273,7 @@ func InviteMembersToConversation(token, chanID string, memberIDs []string) error
 		}
 		headers := map[string]string{"Authorization": "Bearer " + token}
 
-		body, err = makeRequest(conversationsInviteURL, "POST", contentJSON, body, nil, headers)
+		body, err = makeRequest(conversationsInviteURL, methodPOST, contentJSON, body, nil, headers)
 		if err != nil {
 			return errors.Wrapf(err, "unable to make POST request for user %s", id)
 		}

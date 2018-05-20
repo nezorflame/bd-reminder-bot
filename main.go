@@ -84,15 +84,15 @@ func main() {
 	logrus.Infoln("Bot is ready with user ID", botUID)
 
 	// watch the OS signals
-	ch := make(chan os.Signal)
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	for {
 		select {
 		case <-ctx.Done():
 			logrus.Warnln("Shutting down")
 			wg.Wait()
 			return
-		case <-ch:
+		case <-sigs:
 			logrus.Warnln("Exiting program on Ctrl+C")
 			cancel()
 			wg.Wait()
