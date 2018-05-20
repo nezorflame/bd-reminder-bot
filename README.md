@@ -48,6 +48,10 @@ Example configuration can be found in `config.example.toml`
 | birthday | Prints the amount of days left to the next user's birthday |
 | turnoff | Prints the farewell message and exits (manager only) |
 
+Before using any command, mention the bot username before the command name, like this:
+
+`@bdreminder hi`
+
 ### Limitations
 
 Currently users have to fill their birthday into the `Skype` field (because there is no `Birthday` field available) so that bot could parse it.
