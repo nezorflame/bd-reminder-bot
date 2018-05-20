@@ -60,7 +60,6 @@ func Connect(token string) (conn *ws.Conn, userID string, err error) {
 	return
 }
 
-// Init gets appropriate bewsocket URL and bot ID to be used for connection later
 func initWSConn(token string) (wsURL, userID string, err error) {
 	var response struct {
 		Ok    bool   `json:"ok"`
