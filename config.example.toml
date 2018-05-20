@@ -1,0 +1,25 @@
+manager_bucket = "manager"
+channel_bucket = "channel"
+workday_start = 9
+workday_end = 19
+location = "UTC"
+
+[slack]
+bot_token = "xoxb-bot-token"
+legacy_token = "xoxp-le-ga-cy-token"
+main_channel_id = "C00SOMEID"
+manager_id = "U11SOMEID"
+bd_treshold_high = 7
+bd_treshold_low = 5
+blacklist = [
+  "U22SOMEID",
+  "U33SOMEID"
+]
+
+[messages]
+profile_error = "<@%s>, sorry, I was unable to get your profile. Please, try again!"
+bd_parse_error = "<@%s>, sorry, I was unable to understand it :disappointed: Are you sure that its format is correct? Check for any incorrect symbols. Format is: DDMM"
+personal_incoming = "<@%s>, %d days left until your birthday! :cake:"
+personal_today = "<@%s>, it's today! Congratulations!!! :cake: :champagne: :fireworks:"
+manager_announce = "User <@%s> has birthday in %d days!"
+channel_announce = "User <@%s> (%s) has birthday in %d days! Please, send money to <@%s> (Manager Name) on this address to participate: https://some.payment.url"

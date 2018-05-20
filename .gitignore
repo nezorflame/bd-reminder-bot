@@ -4,9 +4,20 @@
 *.dll
 *.so
 *.dylib
+debug*
+bd-reminder-bot*
 
 # Test binary, build with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# User config and DB
+config.toml
+bolt.db
+
+# Unneeded folders and vendor
+.vscode
+vendor
+.DS_Store
