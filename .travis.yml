@@ -1,0 +1,19 @@
+language: go
+
+go:
+  - "1.10"
+  - "tip"
+
+sudo: false
+
+install:
+  - go get -u golang.org/x/vgo
+  - vgo build
+  - go get -u github.com/golang/dep/cmd/dep
+  - dep ensure -v
+
+script:
+  - go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg=$(go list ./... | grep -v /vendor/)
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload.'
