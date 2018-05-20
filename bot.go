@@ -14,11 +14,16 @@ import (
 	goage "github.com/bearbin/go-age"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	dry "github.com/ungerik/go-dry"
 	ws "golang.org/x/net/websocket"
 )
 
-var errorMsgNameTaken = "API error: name_taken"
+const (
+	commandHi       = "hi"
+	commandBirthday = "birthday"
+	commandShutdown = "turnoff"
+
+	errorMsgNameTaken = "API error: name_taken"
+)
 
 func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 	for {
@@ -52,14 +57,14 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 				mText = strings.Trim(mText, " ")
 				logrus.Debugln(mText)
 				switch strings.ToLower(mText) {
-				case "hi":
+				case commandHi:
 					go func(m slack.Message) {
 						m.Text = "<@" + m.User + "> hello!"
 						if err := slack.SendWSMessage(conn, m); err != nil {
 							logrus.WithError(err).Warnln("Unable to send message to Slack")
 						}
 					}(m)
-				case "birthday":
+				case commandBirthday:
 					go func(m slack.Message) {
 						user, err := slack.GetUserProfile(c.LegacyToken, m.User)
 						if err != nil {
@@ -86,8 +91,8 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 							logrus.WithError(err).Warnln("Unable to send message to Slack")
 						}
 					}(m)
-				case "turnoff":
-					m.Text = "Bye!"
+				case commandShutdown:
+					m.Text = msgs.Shutdown
 					if err := slack.SendWSMessage(conn, m); err != nil {
 						logrus.WithError(err).Warnln("Unable to send message to Slack")
 					}
@@ -159,7 +164,7 @@ func announceBirthdays(db *DB, c *config, m *messages) error {
 	logrus.Debugln("Members before blacklisting:", len(chMembers))
 	for i := 0; i < len(chMembers); i++ {
 		// remove blacklisted items
-		if dry.StringInSlice(chMembers[i], c.Blacklist) {
+		if stringInSlice(chMembers[i], c.Blacklist) {
 			logrus.Debugln("Blacklisting", chMembers[i])
 			chMembers = append(chMembers[:i], chMembers[i+1:]...)
 			i--
@@ -305,7 +310,7 @@ func sendBDsToNewChannels(db *DB, c *config, announce string, userInfoMap map[st
 		// skip manager, if it's not his/her birthday
 		logrus.Debugln("Members before blacklisting:", len(members))
 		for i := 0; i < len(members); i++ {
-			if dry.StringInSlice(members[i], c.Blacklist) && members[i] != c.ManagerID || members[i] == id {
+			if stringInSlice(members[i], c.Blacklist) && members[i] != c.ManagerID || members[i] == id {
 				logrus.Debugln("Blacklisting", members[i])
 				members = append(members[:i], members[i+1:]...)
 				i--
@@ -364,4 +369,13 @@ func getUserBDInfo(now time.Time, userBD string) (days int, err error) {
 
 	logrus.Debugf("Days left: %d", days)
 	return
+}
+
+func stringInSlice(s string, ss []string) bool {
+	for i := range ss {
+		if ss[i] == s {
+			return true
+		}
+	}
+	return false
 }

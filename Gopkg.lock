@@ -123,12 +123,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/ungerik/go-dry"
-  packages = ["."]
-  revision = "654ae31114c847b9b579eb1f82a6f7f350ef5d5b"
-
-[[projects]]
-  branch = "master"
   name = "github.com/valyala/bytebufferpool"
   packages = ["."]
   revision = "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
@@ -186,6 +180,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8c6ca0a9b82e894dc0838af38284f9f1f3041796d21e7383596461fdaaf37017"
+  inputs-digest = "63e6a5728ccfa74df491f8eaa124ec2156207d92280a1fc4b588e2e95e2d47d1"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -15,7 +15,6 @@ github.com/spf13/cast v1.2.0 h1:HHl1DSRbEQN2i8tJmtS6ViPyHx35+p51amrdsiTCrkg=
 github.com/spf13/jwalterweatherman v0.0.0-20180109140146-7c0cea34c8ec h1:2ZXvIUGghLpdTVHR1UfvfrzoVlZaE/yOWC5LueIHZig=
 github.com/spf13/pflag v1.0.1 h1:aCvUg6QPl3ibpQUxyLkrEkCHtPqYJL4x9AuhqVqFis4=
 github.com/spf13/viper v1.0.2 h1:Ncr3ZIuJn322w2k1qmzXDnkLAdQMlJqBa9kfAH+irso=
-github.com/ungerik/go-dry v0.0.0-20180411133923-654ae31114c8 h1:p6JzR5AMj5LyCEovRh5MOxmyuuwOEtfcVDwKqsBn41I=
 github.com/valyala/bytebufferpool v0.0.0-20160817181652-e746df99fe4a h1:AOcehBWpFhYPYw0ioDTppQzgI8pAAahVCiMSKTp9rbo=
 github.com/valyala/fasthttp v0.0.0-20171207120941-e5f51c11919d h1:pAXG0woN37FQD08beB53orVchWU97qUUdjKtSuMGqi4=
 golang.org/x/crypto v0.0.0-20180515001509-1a580b3eff78 h1:uJIReYEB1ZZLarzi83Pmig1HhZ/cwFCysx05l0PFBIk=

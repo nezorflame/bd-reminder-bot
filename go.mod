@@ -18,7 +18,6 @@ require (
 	github.com/spf13/jwalterweatherman v0.0.0-20180109140146-7c0cea34c8ec
 	github.com/spf13/pflag v1.0.1
 	github.com/spf13/viper v1.0.2
-	github.com/ungerik/go-dry v0.0.0-20180411133923-654ae31114c8
 	github.com/valyala/bytebufferpool v0.0.0-20160817181652-e746df99fe4a
 	github.com/valyala/fasthttp v0.0.0-20171207120941-e5f51c11919d
 	golang.org/x/crypto v0.0.0-20180515001509-1a580b3eff78

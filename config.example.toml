@@ -17,6 +17,7 @@ blacklist = [
 ]
 
 [messages]
+shutdown = "Bye!"
 profile_error = "<@%s>, sorry, I was unable to get your profile. Please, try again!"
 bd_parse_error = "<@%s>, sorry, I was unable to understand it :disappointed: Are you sure that its format is correct? Check for any incorrect symbols. Format is: DDMM"
 personal_incoming = "<@%s>, %d days left until your birthday! :cake:"

@@ -26,10 +26,6 @@
   version = "1.0.2"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/ungerik/go-dry"
-
-[[constraint]]
   name = "github.com/coreos/bbolt"
   version = "v1.3.1-coreos.6"
 
