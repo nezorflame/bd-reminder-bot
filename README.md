@@ -2,7 +2,29 @@
 
 Slack bot to remind your team and team manager about the upcoming birthdays.
 
+Requires Go v1.8+
+
 Inspired by `mybot` from RapidLoop at <https://github.com/rapidloop/mybot>
+
+## Install
+
+1. Get the bot:
+    ```bash
+    go get -u github.com/nezorflame/bd-reminder-bot
+    cd $GOPATH/src/github.com/nezorflame/bd-reminder-bot
+    ```
+2. Install the dependencies and the bot itself:
+    - with `golang/dep`:
+    ```bash
+    go get -u github.com/golang/dep/cmd/dep
+    dep ensure
+    go install
+    ```
+    - with `vgo`:
+    ```bash
+    go get -u golang.org/x/vgo
+    vgo install
+    ```
 
 ## Usage
 

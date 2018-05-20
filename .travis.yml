@@ -1,9 +1,6 @@
 language: go
 
 go:
-  - "1.5"
-  - "1.6"
-  - "1.7"
   - "1.8"
   - "1.9"
   - "1.10"
@@ -12,6 +9,8 @@ go:
 sudo: false
 
 install:
+  - go get -u golang.org/x/vgo
+  - vgo build
   - go get -u github.com/golang/dep/cmd/dep
   - dep ensure -v
 
