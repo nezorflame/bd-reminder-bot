@@ -17,7 +17,8 @@ bd-reminder-bot*
 config.toml
 bolt.db
 
-# Unneeded folders and vendor
+# Unneeded files and folders
 .vscode
 vendor
 .DS_Store
+coverage.txt
