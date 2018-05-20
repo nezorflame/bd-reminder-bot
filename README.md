@@ -1,4 +1,4 @@
-# bd-reminder-bot
+# bd-reminder-bot [![Go Report Card](https://goreportcard.com/badge/github.com/nezorflame/bd-reminder-bot)](https://goreportcard.com/report/github.com/nezorflame/bd-reminder-bot) [![Build Status](https://travis-ci.com/nezorflame/bd-reminder-bot.svg?branch=master)](https://travis-ci.com/nezorflame/bd-reminder-bot)
 
 Slack bot to remind your team and team manager about the upcoming birthdays.
 
