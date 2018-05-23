@@ -363,6 +363,8 @@ func getUserBDInfo(now time.Time, userBD string) (days int, err error) {
 	if err != nil {
 		return -1, errors.Wrap(err, "unable to parse birthday")
 	}
+	// use the last ms of the day
+	bd = bd.Add(23*time.Hour + 59*time.Minute + 59*time.Second + 999*time.Millisecond)
 	logrus.Debugf("Got user's birthday: %s", bd)
 
 	ageBD := bd.AddDate(goage.Age(bd), 0, 0)
@@ -370,12 +372,7 @@ func getUserBDInfo(now time.Time, userBD string) (days int, err error) {
 		ageBD = ageBD.AddDate(1, 0, 0)
 	}
 
-	if ageBD.Sub(now).Hours() <= 24 {
-		days = 1
-	} else {
-		days = int(ageBD.Sub(now).Hours()) / 24
-	}
-
+	days = int(ageBD.Sub(now).Hours()) / 24
 	logrus.Debugf("Days left: %d", days)
 	return
 }
