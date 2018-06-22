@@ -334,8 +334,9 @@ func sendBDsToNewChannels(db *DB, c *config, announce string, userInfoMap map[st
 		}
 
 		// send the greeting message
+		bdDate := info.Birthday[:2] + "." + info.Birthday[2:4] + "." + info.Birthday[4:]
 		if err := slack.SendAPIMessage(
-			c.LegacyToken, chanID, fmt.Sprintf(announce, id, info.RealName, info.DaysLeft, c.ManagerID),
+			c.LegacyToken, chanID, fmt.Sprintf(announce, id, info.RealName, bdDate, c.ManagerID),
 		); err != nil {
 			return errors.Wrapf(err, "unable to send message to channel with ID %s", chanID)
 		}

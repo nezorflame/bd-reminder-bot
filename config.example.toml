@@ -24,4 +24,4 @@ bd_parse_error = "<@%s>, sorry, I was unable to understand it :disappointed: Are
 personal_incoming = "<@%s>, %d days left until your birthday! :cake:"
 personal_today = "<@%s>, it's today! Congratulations!!! :cake: :champagne: :fireworks:"
 manager_announce = "User <@%s> has birthday in %d days!"
-channel_announce = "User <@%s> (%s) has birthday in %d days! Please, send money to <@%s> (Manager Name) on this address to participate: https://some.payment.url"
+channel_announce = "User <@%s> (%s) has birthday at %s! Please, send money to <@%s> (Manager Name) on this address to participate: https://some.payment.url"
