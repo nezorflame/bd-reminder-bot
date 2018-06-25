@@ -4,7 +4,6 @@ require (
 	github.com/bearbin/go-age v0.0.0-20140407072555-316d0c1e7cd1
 	github.com/coreos/bbolt v1.3.1-coreos.6
 	github.com/fsnotify/fsnotify v1.4.7
-	github.com/gorilla/websocket v1.2.0
 	github.com/hashicorp/hcl v0.0.0-20180404174102-ef8a98b0bbce
 	github.com/klauspost/compress v1.2.1
 	github.com/klauspost/cpuid v0.0.0-20180405133222-e7e905edc00e
@@ -21,8 +20,9 @@ require (
 	github.com/spf13/viper v1.0.2
 	github.com/valyala/bytebufferpool v0.0.0-20160817181652-e746df99fe4a
 	github.com/valyala/fasthttp v0.0.0-20171207120941-e5f51c11919d
-	golang.org/x/crypto v0.0.0-20180621125126-a49355c7e3f8
-	golang.org/x/sys v0.0.0-20180622082034-63fc586f45fe
+	golang.org/x/crypto v0.0.0-20180515001509-1a580b3eff78
+	golang.org/x/net v0.0.0-20180519122554-57065200b4b0
+	golang.org/x/sys v0.0.0-20180514143608-7c87d13f8e83
 	golang.org/x/text v0.3.0
 	gopkg.in/yaml.v2 v2.2.1
 )

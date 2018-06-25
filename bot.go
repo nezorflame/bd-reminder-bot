@@ -12,9 +12,9 @@ import (
 	"github.com/nezorflame/bd-reminder-bot/slack"
 
 	goage "github.com/bearbin/go-age"
-	ws "github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	ws "golang.org/x/net/websocket"
 )
 
 const (
