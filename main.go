@@ -57,7 +57,7 @@ func main() {
 	defer db.Close()
 
 	// connect to Slack
-	wsConfig, botUID, err := slack.InitWSConfig(botToken)
+	wsURL, botUID, err := slack.InitWS(botToken)
 	if err != nil {
 		logrus.WithError(err).Fatalf("Unable to get Slack WS config")
 	}
@@ -80,7 +80,7 @@ func main() {
 			}
 
 			// dial websocket
-			wsConn, err := slack.DialWS(wsConfig)
+			wsConn, err := slack.DialWS(wsURL)
 			if err != nil {
 				errCount++
 				logrus.WithError(err).WithField("try", errCount).Errorf("Unable to connect to Slack's websocket, retrying")

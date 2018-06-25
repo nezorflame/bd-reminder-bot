@@ -5,9 +5,9 @@ import (
 	"sync/atomic"
 	"time"
 
+	ws "github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
-	ws "golang.org/x/net/websocket"
 )
 
 // Slack URL consts
@@ -27,26 +27,9 @@ var (
 	retryCount = 3
 )
 
-var msgCounter uint64
-
-// GetWSMessage receives a message from RTM API
-func GetWSMessage(conn *ws.Conn) (m Message, err error) {
-	if err = conn.SetReadDeadline(time.Now().Add(wsDeadline)); err != nil {
-		return
-	}
-	err = ws.JSON.Receive(conn, &m)
-	return
-}
-
-// SendWSMessage sends a message with RTM API
-func SendWSMessage(conn *ws.Conn, m Message) error {
-	m.ID = atomic.AddUint64(&msgCounter, 1)
-	return ws.JSON.Send(conn, m)
-}
-
-// InitWSConfig creates a websocket-based Real Time API session
-// and returns the websocket config and the ID of the bot/user whom the token belongs to.
-func InitWSConfig(token string) (config *ws.Config, userID string, err error) {
+// InitWS creates a websocket-based Real Time API session
+// and returns the websocket URL and the ID of the bot/user whom the token belongs to.
+func InitWS(token string) (url, userID string, err error) {
 	var response struct {
 		OK    bool   `json:"ok"`
 		Error string `json:"error"`
@@ -73,21 +56,33 @@ func InitWSConfig(token string) (config *ws.Config, userID string, err error) {
 		return
 	}
 
-	if config, err = ws.NewConfig(response.URL, apiURL); err != nil {
-		err = errors.Wrap(err, "unable to create websocket config")
-		return
-	}
-
-	userID = response.Self.ID
+	url, userID = response.URL, response.Self.ID
 	return
 }
 
 // DialWS wraps ws.DialConfig
-func DialWS(config *ws.Config) (conn *ws.Conn, err error) {
-	if conn, err = ws.DialConfig(config); err != nil {
+func DialWS(url string) (conn *ws.Conn, err error) {
+	if conn, _, err = ws.DefaultDialer.Dial(url, nil); err != nil {
 		err = errors.Wrap(err, "unable to dial Slack's websocket")
 	}
 	return
+}
+
+var msgCounter uint64
+
+// GetWSMessage receives a message from RTM API
+func GetWSMessage(conn *ws.Conn) (m Message, err error) {
+	if err = conn.SetReadDeadline(time.Now().Add(wsDeadline)); err != nil {
+		return
+	}
+	err = ws.ReadJSON(conn, &m)
+	return
+}
+
+// SendWSMessage sends a message with RTM API
+func SendWSMessage(conn *ws.Conn, m Message) error {
+	m.ID = atomic.AddUint64(&msgCounter, 1)
+	return ws.WriteJSON(conn, m)
 }
 
 func makeRequest(url, method, contentType string, body []byte, params, headers map[string]string) ([]byte, error) {
