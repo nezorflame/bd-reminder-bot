@@ -46,22 +46,21 @@ func main() {
 	// parse config
 	mBucket, cBucket, botToken, c, m, err := parseConfig()
 	if err != nil {
-		logrus.Fatalf("Unable to init config: %v", err)
+		logrus.WithError(err).Fatalf("Unable to init config")
 	}
 
 	// connect to BoltDB
 	db, err := openDB(dbPtr, mBucket, cBucket, DefaultDBTimeout)
 	if err != nil {
-		logrus.Fatalf("Unable to open DB: %v", err)
+		logrus.WithError(err).Fatalf("Unable to open DB")
 	}
 	defer db.Close()
 
 	// connect to Slack
-	wsConn, botUID, err := slack.Connect(botToken)
+	wsConfig, botUID, err := slack.InitWSConfig(botToken)
 	if err != nil {
-		logrus.Fatalf("Unable to connect to Slack: %v", err)
+		logrus.WithError(err).Fatalf("Unable to get Slack WS config")
 	}
-	defer wsConn.Close()
 	c.BotUID = botUID
 
 	// launch the message and birthday watchers
@@ -70,13 +69,40 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go func() {
-		msgWatcher(ctx, wsConn, c, m)
+		// error counter and retry limit
+		errCount := 0
+		retryLimit := 3
+		for {
+			// check error counter
+			if errCount == retryLimit {
+				logrus.Warnln("Error limit reached, exiting")
+				break
+			}
+
+			// dial websocket
+			wsConn, err := slack.DialWS(wsConfig)
+			if err != nil {
+				errCount++
+				logrus.WithError(err).WithField("try", errCount).Errorf("Unable to connect to Slack's websocket, retrying")
+				continue
+			}
+			defer wsConn.Close() // not interested in this error, so skipping
+			errCount = 0         // resetting the counter
+
+			// launch message watcher
+			if err := msgWatcher(ctx, wsConn, c, m); err != nil {
+				errCount++
+				wsConn.Close() // not interested in this error, so skipping
+				logrus.WithError(err).WithField("try", errCount).Warnln("Message watcher failed, trying to reconnect")
+				continue
+			}
+		}
 		cancel()
 		wg.Done()
 	}()
 	go func() {
 		if err := bdWatcher(ctx, db, c, m); err != nil {
-			logrus.Errorln("Birthday watcher failed:", err)
+			logrus.WithError(err).Errorln("Birthday watcher failed")
 		}
 		cancel()
 		wg.Done()

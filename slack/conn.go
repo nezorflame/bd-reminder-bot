@@ -44,25 +44,11 @@ func SendWSMessage(conn *ws.Conn, m Message) error {
 	return ws.JSON.Send(conn, m)
 }
 
-// Connect creates a websocket-based Real Time API session and return the websocket
-// and the ID of the (bot-)user whom the token belongs to.
-func Connect(token string) (conn *ws.Conn, userID string, err error) {
-	wsURL, userID, err := initWSConn(token)
-	if err != nil {
-		err = errors.Wrap(err, "unable to get websocket URL")
-		return
-	}
-
-	if conn, err = ws.Dial(wsURL, "", apiURL); err != nil {
-		err = errors.Wrap(err, "unable to call Slack's websocket")
-	}
-
-	return
-}
-
-func initWSConn(token string) (wsURL, userID string, err error) {
+// InitWSConfig creates a websocket-based Real Time API session
+// and returns the websocket config and the ID of the bot/user whom the token belongs to.
+func InitWSConfig(token string) (config *ws.Config, userID string, err error) {
 	var response struct {
-		Ok    bool   `json:"ok"`
+		OK    bool   `json:"ok"`
 		Error string `json:"error"`
 		URL   string `json:"url"`
 		Self  struct {
@@ -82,12 +68,25 @@ func initWSConn(token string) (wsURL, userID string, err error) {
 		return
 	}
 
-	if !response.Ok {
+	if !response.OK {
 		err = errors.Wrap(err, "request was unsuccessful")
 		return
 	}
 
-	wsURL, userID = response.URL, response.Self.ID
+	if config, err = ws.NewConfig(response.URL, apiURL); err != nil {
+		err = errors.Wrap(err, "unable to create websocket config")
+		return
+	}
+
+	userID = response.Self.ID
+	return
+}
+
+// DialWS wraps ws.DialConfig
+func DialWS(config *ws.Config) (conn *ws.Conn, err error) {
+	if conn, err = ws.DialConfig(config); err != nil {
+		err = errors.Wrap(err, "unable to dial Slack's websocket")
+	}
 	return
 }
 

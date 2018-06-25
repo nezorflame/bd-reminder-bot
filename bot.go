@@ -25,24 +25,25 @@ const (
 	errorMsgNameTaken = "API error: name_taken"
 )
 
-func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
+func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) error {
 	for {
 		select {
 		case <-ctx.Done():
 			logrus.Warnln("Stopping message watcher")
-			return
+			return nil
 		default:
 			// read each incoming message
 			m, err := slack.GetWSMessage(conn)
 			if err != nil {
 				// ignore timeout errors, log others
 				if netErr, ok := err.(net.Error); ok {
-					if netErr.Timeout() {
+					if netErr.Timeout() || netErr.Temporary() {
 						continue
 					}
 				}
-				logrus.Debugln("Not a message, error:", err)
-				continue
+				// exit to try to recover from this error
+				logrus.WithError(err).Debugln("Not a message")
+				return err
 			}
 
 			// skip non-messages
@@ -68,7 +69,7 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 					go func(m slack.Message) {
 						user, err := slack.GetUserProfile(c.LegacyToken, m.User)
 						if err != nil {
-							logrus.Warn(err)
+							logrus.WithError(err).Error("Unable to get user profile")
 							m.Text = fmt.Sprintf(msgs.ProfileError, m.User)
 							if err := slack.SendWSMessage(conn, m); err != nil {
 								logrus.WithError(err).Errorln("Unable to send message to Slack")
@@ -78,7 +79,7 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 
 						days, err := getUserBDInfo(time.Now().In(c.Location), user.Skype)
 						if err != nil {
-							logrus.Warn(err)
+							logrus.WithError(err).Error("Unable to get user BD info")
 							m.Text = fmt.Sprintf(msgs.BDParseError, user.ID)
 						} else if days > 0 {
 							logrus.Infof("User %s: %d days left", user.ID, days)
@@ -105,7 +106,7 @@ func msgWatcher(ctx context.Context, conn *ws.Conn, c *config, msgs *messages) {
 							logrus.WithError(err).Errorln("Unable to send message to Slack")
 						}
 					}
-					return
+					return nil
 				default:
 					// ignore this
 					continue
@@ -191,7 +192,7 @@ func announceBirthdays(db *DB, c *config, m *messages) error {
 			defer wg.Done()
 			user, err := slack.GetUserProfile(c.LegacyToken, chMembers[i])
 			if err != nil {
-				logrus.Errorf("Unable to get user %s: %v", chMembers[i], err)
+				logrus.WithError(err).Errorf("Unable to get user %s", chMembers[i])
 				return
 			}
 			logrus.Debugln("Adding", user.ID, user.RealName)
@@ -228,7 +229,7 @@ func announceBirthdays(db *DB, c *config, m *messages) error {
 			logrus.Infof("Checking manager cache for user %s", p.ID)
 			ok, err := db.CheckUserBDInCache(db.ManagerBucketName, p.ID, currentBD)
 			if err != nil {
-				logrus.Errorf("Unable to check user %s in cache: %v", p.ID, err)
+				logrus.WithError(err).Errorf("Unable to check user %s in cache", p.ID)
 			} else if ok {
 				logrus.Infof("User %s is present in manager cache, skipping", p.ID)
 				continue
@@ -240,7 +241,7 @@ func announceBirthdays(db *DB, c *config, m *messages) error {
 			logrus.Infof("Checking channel cache for user %s", p.ID)
 			ok, err := db.CheckUserBDInCache(db.ChannelBucketName, p.ID, currentBD)
 			if err != nil {
-				logrus.Errorf("Unable to check user %s in cache: %v", p.ID, err)
+				logrus.WithError(err).Errorf("Unable to check user %s in cache", p.ID)
 			} else if ok {
 				logrus.Infof("User %s is present in channel cache, skipping", p.ID)
 				continue
@@ -255,13 +256,13 @@ func announceBirthdays(db *DB, c *config, m *messages) error {
 		if err := slack.SendAPIMessage(
 			c.LegacyToken, c.ManagerDM, fmt.Sprintf(m.ManagerAnnounce, id, info.DaysLeft),
 		); err != nil {
-			logrus.Errorf("Unable to send message to user %s: %v", id, err)
+			logrus.WithError(err).Errorf("Unable to send message to user %s", id)
 			continue
 		}
 
 		// add to cache
 		if err := db.SaveUserBDToCache(db.ManagerBucketName, id, info.Birthday); err != nil {
-			logrus.Errorf("Unable to save birthday in manager cache for user %s: %v", id, err)
+			logrus.WithError(err).Errorf("Unable to save birthday in manager cache for user %s", id)
 			continue
 		}
 		logrus.Infoln("Saved birthday in manager cache for user", id)
@@ -269,7 +270,8 @@ func announceBirthdays(db *DB, c *config, m *messages) error {
 
 	if len(channelAnnounceMap) > 0 {
 		if err := sendBDsToNewChannels(db, c, m.ChannelAnnounce, channelAnnounceMap); err != nil {
-			logrus.Errorf("Unable to send birthdays to channels: %v", err)
+			logrus.WithError(err).Errorf("Unable to send birthdays to channels")
+			return err
 		}
 	}
 
@@ -343,7 +345,7 @@ func sendBDsToNewChannels(db *DB, c *config, announce string, userInfoMap map[st
 
 		// add to cache
 		if err := db.SaveUserBDToCache(db.ChannelBucketName, id, info.Birthday); err != nil {
-			logrus.Errorf("Unable to save birthday in channel cache for user %s: %v", id, err)
+			logrus.WithError(err).Errorf("Unable to save birthday in channel cache for user %s", id)
 		} else {
 			logrus.Infoln("Saved birthday in channel cache for user", id)
 		}
