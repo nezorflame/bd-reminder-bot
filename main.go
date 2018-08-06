@@ -63,11 +63,13 @@ func main() {
 	}
 	c.BotUID = botUID
 
-	// launch the message and birthday watchers
+	// create context and waitgroup
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	var wg sync.WaitGroup
 	wg.Add(2)
+
+	// launch message watcher
 	go func() {
 		// error counter and retry limit
 		errCount := 0
@@ -96,10 +98,13 @@ func main() {
 				logrus.WithError(err).WithField("try", errCount).Warnln("Message watcher failed, trying to reconnect")
 				continue
 			}
+			break
 		}
 		cancel()
 		wg.Done()
 	}()
+
+	// launch birthday watcher
 	go func() {
 		if err := bdWatcher(ctx, db, c, m); err != nil {
 			logrus.WithError(err).Errorln("Birthday watcher failed")
