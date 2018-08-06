@@ -9,9 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nezorflame/bd-reminder-bot/slack"
-
 	goage "github.com/bearbin/go-age"
+	"github.com/nezorflame/bd-reminder-bot/slack"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	ws "golang.org/x/net/websocket"

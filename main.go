@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/nezorflame/bd-reminder-bot/slack"
-
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
