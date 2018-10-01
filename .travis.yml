@@ -1,19 +1,20 @@
+dist: trusty
+sudo: false
 language: go
-
 go:
   - "1.10"
-  - "tip"
-
-sudo: false
-
+  - "1.11"
+env:
+  global:
+    - GO111MODULE=on
+    - PATH=$PATH:$GOPATH/bin
+    - GOLANGCILINT=v1.10.2
 install:
-  - go get -u golang.org/x/vgo
-  - vgo build
-  - go get -u github.com/golang/dep/cmd/dep
-  - dep ensure -v
-
+  - go build
+before_script:
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin $GOLANGCILINT
 script:
   - go test -race -coverprofile=coverage.txt -covermode=atomic ./...
-
+  - golangci-lint run
 after_success:
   - bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload.'
